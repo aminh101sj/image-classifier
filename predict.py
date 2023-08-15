@@ -1,5 +1,6 @@
 import argparse
 from machine import Machine
+import json
 
 def main():
     parser = argparse.ArgumentParser(description='Machine learning cmd line')
@@ -20,7 +21,8 @@ def main():
 
     cat_to_name = m.cat_to_name
     if args.category_names:
-        cat_to_name = args.category_names
+        with open(args.category_names, 'r') as f:
+            cat_to_name = json.load(f)
 
     labels = []
     for idx in c:

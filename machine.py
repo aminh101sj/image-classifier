@@ -100,8 +100,9 @@ class Machine(object):
 
         # Override if necessary
         if self.gpu:
-            print('Force use Cuda')
-            self.model.to('cuda')
+            if torch.cuda.is_available():
+                print('Force use Cuda.')
+                self.model.to('cuda')
 
 
         # Set Optimizer 
@@ -337,7 +338,9 @@ class Machine(object):
 
         # Force use GPU
         if gpu:
-            self.model.to('cuda')
+            if torch.cuda.is_available():
+                print('Cuda available. Using cuda')
+                self.model.to('cuda')
 
         self.model.eval()
         logps = self.model.forward(image)
@@ -345,7 +348,7 @@ class Machine(object):
         
         ps = torch.exp(logps)
         
-        top_ps, top_idx = ps.topk(k=5, dim=1)
+        top_ps, top_idx = ps.topk(k=topk, dim=1)
 
         list_ps = top_ps.tolist()[0]
         list_idx = top_idx.tolist()[0]
