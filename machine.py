@@ -94,16 +94,10 @@ class Machine(object):
 
         self.criterion = nn.NLLLoss()
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if self.gpu and torch.cuda.is_available() else "cpu")
+
         # Set model to use cpu or gpu
         self.model.to(self.device)
-
-        # Override if necessary
-        if self.gpu:
-            if torch.cuda.is_available():
-                print('Force use Cuda.')
-                self.model.to('cuda')
-
 
         # Set Optimizer 
         self.optimizer = optim.Adam(self.model.classifier.parameters(), lr=self.learning_rate)
@@ -329,18 +323,12 @@ class Machine(object):
         '''
         
         # TODO: Implement the code to predict the class from an image file
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda" if gpu and torch.cuda.is_available() else "cpu")
         
         image = torch.from_numpy(self.process_image(image_path))
         image = torch.unsqueeze(image,0).to(device).float()
         
         self.model.to(device)
-
-        # Force use GPU
-        if gpu:
-            if torch.cuda.is_available():
-                print('Cuda available. Using cuda')
-                self.model.to('cuda')
 
         self.model.eval()
         logps = self.model.forward(image)
